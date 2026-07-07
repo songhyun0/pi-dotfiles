@@ -29,8 +29,8 @@ else
 fi
 
 if [ "$PI_WEB_BUILD" = "1" ]; then
-  log "Installing dependencies"
-  npm --prefix "$PI_WEB_DIR" ci
+  log "Installing dependencies (including dev dependencies required by Next.js build)"
+  npm --prefix "$PI_WEB_DIR" ci --include=dev
   log "Building pi-web"
   npm --prefix "$PI_WEB_DIR" run build
 else
@@ -41,7 +41,14 @@ chmod +x "$PI_WEB_DIR/bin/pi-web.js"
 ln -sfn "$PI_WEB_DIR/bin/pi-web.js" "$PI_WEB_BIN_DIR/pi-web"
 log "Linked $PI_WEB_BIN_DIR/pi-web -> $PI_WEB_DIR/bin/pi-web.js"
 
+resolved_pi_web="$(command -v pi-web 2>/dev/null || true)"
 case ":$PATH:" in
-  *":$PI_WEB_BIN_DIR:"*) ;;
-  *) log "Add $PI_WEB_BIN_DIR to PATH if 'pi-web' is not found in new shells." ;;
+  *":$PI_WEB_BIN_DIR:"*)
+    if [ -n "$resolved_pi_web" ] && [ "$resolved_pi_web" != "$PI_WEB_BIN_DIR/pi-web" ]; then
+      log "Current PATH resolves pi-web to $resolved_pi_web. Put $PI_WEB_BIN_DIR earlier in PATH to use this clone by default."
+    fi
+    ;;
+  *)
+    log "Add $PI_WEB_BIN_DIR to PATH if 'pi-web' is not found in new shells."
+    ;;
 esac

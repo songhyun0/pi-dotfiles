@@ -1,8 +1,11 @@
 #!/usr/bin/env bash
 set -euo pipefail
+SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd -P)"
+DEFAULT_DOTFILES_DIR="$(cd "$SCRIPT_DIR/.." && pwd -P)"
+DOTFILES_DIR="${DOTFILES_DIR:-$DEFAULT_DOTFILES_DIR}"
 
 PI_WEB_SOURCE="${PI_WEB_SOURCE:-https://github.com/songhyun0/pi-web.git}"
-PI_WEB_DIR="${PI_WEB_DIR:-$HOME/.local/share/pi-web}"
+PI_WEB_DIR="${PI_WEB_DIR:-$DOTFILES_DIR/repos/pi-web}"
 PI_WEB_BIN_DIR="${PI_WEB_BIN_DIR:-${PI_CODING_AGENT_DIR:-$HOME/.pi/agent}/bin}"
 PI_WEB_BUILD="${PI_WEB_BUILD:-1}"
 

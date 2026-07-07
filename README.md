@@ -28,8 +28,9 @@ Symlinked into `~/.pi/agent`:
 `pi-web` is installed as a separate local git checkout that tracks `main`:
 
 - repo: `https://github.com/songhyun0/pi-web.git`
-- default dir: `~/.local/share/pi-web`
-- command symlink: `~/.pi/agent/bin/pi-web -> ~/.local/share/pi-web/bin/pi-web.js` by default
+- default dir: `repos/pi-web` inside this dotfiles checkout (ignored by git)
+- command symlink: `~/.pi/agent/bin/pi-web -> <pi-dotfiles>/repos/pi-web/bin/pi-web.js` by default
+- this keeps Pi agent config and the editable pi-web checkout under one `pi-dotfiles` directory while still letting `pi-web` remain its own git repo.
 - this works with the current PATH because `~/.pi/agent/bin` is already before Homebrew paths.
 
 ## Security policy
@@ -62,7 +63,7 @@ $EDITOR pi-agent/skills/upstream-sync/SKILL.md
 `pi-web`:
 
 ```bash
-cd ~/.local/share/pi-web
+cd ~/.local/share/pi-dotfiles/repos/pi-web  # or <your checkout>/repos/pi-web
 $EDITOR ...
 npm run build
 pi-web
@@ -97,6 +98,6 @@ Update/rebuild only `pi-web`:
 - `INSTALL_PI_PACKAGES=0`: skip `pi install` for packages in `settings.json`.
 - `INSTALL_PI_WEB=0`: skip `pi-web` clone/build/link.
 - `PI_WEB_SOURCE`: pi-web git source. Defaults to `https://github.com/songhyun0/pi-web.git`.
-- `PI_WEB_DIR`: pi-web checkout path. Defaults to `~/.local/share/pi-web`.
+- `PI_WEB_DIR`: pi-web checkout path. Defaults to `<DOTFILES_DIR>/repos/pi-web`.
 - `PI_WEB_BIN_DIR`: symlink dir for `pi-web`. Defaults to `${PI_CODING_AGENT_DIR:-~/.pi/agent}/bin`.
 - `PI_WEB_BUILD=0`: skip `npm ci --include=dev && npm run build` in `update-pi-web.sh`.

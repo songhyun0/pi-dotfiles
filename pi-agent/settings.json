@@ -1,0 +1,23 @@
+{
+  "theme": "dark",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.5",
+  "defaultThinkingLevel": "xhigh",
+  "enabledModels": [
+    "openai-codex/gpt-5.5"
+  ],
+  "hideThinkingBlock": false,
+  "packages": [
+    "npm:pi-web-access",
+    "npm:@diegopetrucci/pi-openai-fast",
+    "npm:pi-hashline-edit-pro",
+    "npm:pi-mcp-adapter",
+    "npm:pi-codex-goal",
+    "npm:@narumitw/pi-lsp",
+    "npm:@juicesharp/rpiv-ask-user-question",
+    "npm:@juicesharp/rpiv-todo",
+    "npm:@ff-labs/pi-fff",
+    "npm:pi-simplify",
+    "npm:@quintinshaw/pi-dynamic-workflows"
+  ]
+}

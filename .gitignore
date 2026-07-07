@@ -1,0 +1,28 @@
+# macOS/editor noise
+.DS_Store
+*.swp
+*.swo
+
+# Node/runtime artifacts
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-store/
+
+# Never commit Pi secrets or runtime state
+**/auth.json
+**/mcp-oauth/
+**/sessions/
+**/state/
+**/tmp/
+**/run-history.jsonl
+**/runtime/
+**/npm/
+**/git/
+**/orca/
+**/mcp-cache.json
+**/web-search.json
+
+# Backups made by install.sh
+*.backup.*

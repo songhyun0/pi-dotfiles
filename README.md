@@ -29,8 +29,8 @@ Symlinked into `~/.pi/agent`:
 
 - repo: `https://github.com/songhyun0/pi-web.git`
 - default dir: `~/.local/share/pi-web`
-- command symlink: `~/.local/bin/pi-web -> ~/.local/share/pi-web/bin/pi-web.js`
-- if another global `pi-web` is earlier in `PATH`, run `~/.local/bin/pi-web` directly or put `~/.local/bin` earlier in `PATH`.
+- command symlink: `~/.pi/agent/bin/pi-web -> ~/.local/share/pi-web/bin/pi-web.js` by default
+- this works with the current PATH because `~/.pi/agent/bin` is already before Homebrew paths.
 
 ## Security policy
 
@@ -98,5 +98,5 @@ Update/rebuild only `pi-web`:
 - `INSTALL_PI_WEB=0`: skip `pi-web` clone/build/link.
 - `PI_WEB_SOURCE`: pi-web git source. Defaults to `https://github.com/songhyun0/pi-web.git`.
 - `PI_WEB_DIR`: pi-web checkout path. Defaults to `~/.local/share/pi-web`.
-- `PI_WEB_BIN_DIR`: symlink dir for `pi-web`. Defaults to `~/.local/bin`.
+- `PI_WEB_BIN_DIR`: symlink dir for `pi-web`. Defaults to `${PI_CODING_AGENT_DIR:-~/.pi/agent}/bin`.
 - `PI_WEB_BUILD=0`: skip `npm ci --include=dev && npm run build` in `update-pi-web.sh`.

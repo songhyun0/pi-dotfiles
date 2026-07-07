@@ -9,7 +9,7 @@
   "hideThinkingBlock": false,
   "packages": [
     "npm:pi-web-access",
-    "npm:@diegopetrucci/pi-openai-fast",
+    "npm:pi-codex-fast",
     "npm:pi-hashline-edit-pro",
     "npm:pi-mcp-adapter",
     "npm:pi-codex-goal",

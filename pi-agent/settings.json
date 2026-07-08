@@ -15,7 +15,7 @@
     "npm:pi-codex-goal",
     "npm:@narumitw/pi-lsp",
     "npm:@juicesharp/rpiv-ask-user-question",
-    "npm:@juicesharp/rpiv-todo",
+    "git:github.com/songhyun0/rpiv-mono@f7b26fd318e34d8b76be692d3b94d10fca113142",
     "npm:@ff-labs/pi-fff",
     "npm:pi-simplify",
     "npm:@quintinshaw/pi-dynamic-workflows"

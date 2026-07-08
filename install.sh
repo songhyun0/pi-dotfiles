@@ -5,6 +5,7 @@ DOTFILES_REPO="${DOTFILES_REPO:-https://github.com/songhyun0/pi-dotfiles.git}"
 INSTALL_PI_CLI="${INSTALL_PI_CLI:-1}"
 INSTALL_PI_PACKAGES="${INSTALL_PI_PACKAGES:-1}"
 INSTALL_PI_WEB="${INSTALL_PI_WEB:-1}"
+INSTALL_RPIV_MONO="${INSTALL_RPIV_MONO:-1}"
 
 log() { printf '[pi-dotfiles] %s\n' "$*"; }
 fail() { printf '[pi-dotfiles] ERROR: %s\n' "$*" >&2; exit 1; }
@@ -101,19 +102,61 @@ if [ -f "$DOTFILES_DIR/pi-agent/keybindings.json" ]; then
   link_managed "$DOTFILES_DIR/pi-agent/keybindings.json" "$PI_DIR/keybindings.json"
 fi
 
+if [ "$INSTALL_RPIV_MONO" = "1" ]; then
+  log "Installing/updating rpiv-mono for local rpiv-todo"
+  DOTFILES_DIR="$DOTFILES_DIR" bash "$DOTFILES_DIR/scripts/update-rpiv-mono.sh"
+else
+  log "Skipping rpiv-mono install because INSTALL_RPIV_MONO=$INSTALL_RPIV_MONO"
+fi
+
 if [ "$INSTALL_PI_PACKAGES" = "1" ]; then
   log "Installing Pi packages from pi-agent/settings.json"
   PI_CODING_AGENT_DIR="$PI_DIR" node - "$DOTFILES_DIR/pi-agent/settings.json" <<'NODE'
-const { readFileSync } = require('node:fs');
+const { existsSync, readFileSync } = require('node:fs');
 const { execFileSync } = require('node:child_process');
+const { dirname, isAbsolute, resolve } = require('node:path');
+const { fileURLToPath } = require('node:url');
 const settingsPath = process.argv[2];
 const settings = JSON.parse(readFileSync(settingsPath, 'utf8'));
-for (const spec of settings.packages ?? []) {
-  console.log(`[pi-dotfiles] pi install ${spec}`);
-  execFileSync('pi', ['install', spec], {
-    stdio: 'inherit',
-    env: { ...process.env, PI_CODING_AGENT_DIR: process.env.PI_CODING_AGENT_DIR },
-  });
+const agentDir = process.env.PI_CODING_AGENT_DIR ?? dirname(settingsPath);
+const homeDir = process.env.HOME ?? '';
+
+function isManagedPackageSource(spec) {
+  return /^(npm:|git:|github:|https?:|ssh:)/.test(spec.trim());
+}
+
+function resolveLocalPackageSpec(spec) {
+  const trimmed = spec.trim();
+  const expanded = trimmed.startsWith('file://')
+    ? fileURLToPath(trimmed)
+    : trimmed === '~'
+      ? homeDir
+      : trimmed.startsWith('~/')
+        ? resolve(homeDir, trimmed.slice(2))
+        : trimmed;
+  return isAbsolute(expanded) ? resolve(expanded) : resolve(agentDir, expanded);
+}
+
+for (const entry of settings.packages ?? []) {
+  const spec = typeof entry === 'string' ? entry : entry?.source;
+  if (typeof spec !== 'string' || spec.trim() === '') {
+    throw new Error(`Invalid Pi package entry in ${settingsPath}: ${JSON.stringify(entry)}`);
+  }
+
+  if (isManagedPackageSource(spec)) {
+    console.log(`[pi-dotfiles] pi install ${spec}`);
+    execFileSync('pi', ['install', spec], {
+      stdio: 'inherit',
+      env: { ...process.env, PI_CODING_AGENT_DIR: process.env.PI_CODING_AGENT_DIR },
+    });
+    continue;
+  }
+
+  const resolved = resolveLocalPackageSpec(spec);
+  if (!existsSync(resolved)) {
+    throw new Error(`Local Pi package path does not exist: ${spec} -> ${resolved}`);
+  }
+  console.log(`[pi-dotfiles] local Pi package ${spec} -> ${resolved}`);
 }
 NODE
 else
